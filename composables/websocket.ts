@@ -1,62 +1,74 @@
 // Client Side Websocket
 
 import { io } from "socket.io-client";
+import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
+import { useChat } from "./chat";
+
+const room = reactive({
+  connected: false,
+  players: [],
+  id: "",
+  ctxId: 0,
+});
 
 export const useWebsocket = () => {
   const socket = io();
+  const toast = useToast();
+  const { addMessage } = useChat();
 
-  const hooks = reactive<{
-    connect: () => void;
-    disconnect: () => void;
-    message: (message: any) => void;
-    custom: Record<string, (...args: any) => void>;
-  }>({
-    connect: () => {},
-    disconnect: () => {},
-    message: () => {},
-    custom: {},
+  socket.on("room-joined", ({ players, roomId }) => {
+    room.connected = true;
+    room.players = players;
+    room.ctxId = players.findIndex((player: any) => player.id === socket.id);
+    room.id = roomId;
   });
 
-  socket.on("connect", () => {
-    hooks.connect();
+  socket.on("error", () => {
+    console.error("Error joining room");
+    toast.add({
+      title: "Error joining room",
+      description: "Room is full",
+    });
   });
 
-  socket.on("disconnect", () => {
-    hooks.disconnect();
-  });
+  const createOrJoinRoom = (roomId: string) => {
+    const randomName = uniqueNamesGenerator({
+      dictionaries: [colors, animals],
+      separator: "",
+      style: "capital",
+    });
+    socket.emit("createOrJoinRoom", {
+      id: roomId,
+      name: randomName,
+    });
 
-  socket.on("message", (message) => {
-    hooks.message(message);
-  });
-
-  const onConnect = (callback: () => void) => {
-    hooks.connect = callback;
+    // Chat events
+    socket.on("chat:join", ({ name }) => {
+      toast.add({
+        title: `${name} joined the room !`,
+      });
+      addMessage({
+        isServer: true,
+        message: `${name} joined the room !`,
+      });
+    });
+    socket.on("chat:message", ({ message, player }) => {
+      addMessage({ isServer: false, message, name: player.name });
+    });
   };
 
-  const onDisconnect = (callback: () => void) => {
-    hooks.disconnect = callback;
-  };
-
-  const onMessage = (callback: (message: any) => void) => {
-    hooks.message = callback;
-  };
-
-  const onCustom = (event: string, callback: (...args: any) => void) => {
-    hooks.custom[event] = callback;
-    socket.on(event, callback);
-  };
-
-  const createOrJoinRoom = () => {
-    console.log("oziegzogib");
-    socket.emit("createOrJoinRoom", "room");
+  const sendChatMessage = (message: string) => {
+    socket.emit("chat:message", {
+      message,
+      roomId: room.id,
+      player: room.players[room.ctxId],
+    });
   };
 
   return {
     socket,
-    onConnect,
-    onDisconnect,
-    onMessage,
-    onCustom,
     createOrJoinRoom,
+    sendChatMessage,
+    room,
   };
 };
