@@ -7,15 +7,7 @@ const allRooms: { [key: string]: { players: Record<string, any>[] } } = {};
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {
   const engine = new Engine();
-  const io = new Server({
-    cors: {
-      origin: "*",
-      methods: ["GET", "POST"],
-      credentials: true,
-    },
-    transports: ["websocket", "polling"],
-    allowEIO3: true,
-  });
+  const io = new Server();
 
   io.bind(engine);
 
@@ -32,6 +24,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
         allRooms[roomId].players.push({ name, id: socket.id });
       }
       socket.join(roomId);
+      currentRoom = roomId;
       io.to(roomId).emit("room-joined", {
         roomId,
         players: allRooms[roomId].players,
@@ -45,9 +38,16 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
     socket.on("disconnect", () => {
       console.log("A user disconnected");
       if (currentRoom) {
+        const player = allRooms[currentRoom].players.find(
+          (player) => player.id === socket.id
+        );
         allRooms[currentRoom].players = allRooms[currentRoom].players.filter(
           (player) => player.id !== socket.id
         );
+        io.to(currentRoom).emit("chat:leave", {
+          name: player?.name,
+          players: allRooms[currentRoom].players,
+        });
       }
     });
   });

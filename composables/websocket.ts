@@ -52,6 +52,16 @@ export const useWebsocket = () => {
         message: `${name} joined the room !`,
       });
     });
+    socket.on("chat:leave", ({ name, players }) => {
+      toast.add({
+        title: `${name} left the room...`,
+      });
+      addMessage({
+        isServer: true,
+        message: `${name} left the room...`,
+      });
+      room.players = players;
+    });
     socket.on("chat:message", ({ message, player }) => {
       addMessage({ isServer: false, message, name: player.name });
     });
