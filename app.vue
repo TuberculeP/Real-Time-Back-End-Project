@@ -2,6 +2,7 @@
   <ClientOnly>
     <main>
       <RoomTest />
+      <ConnectFour />
       <RoomChat />
       <UNotifications />
     </main>
@@ -11,6 +12,7 @@
 <script setup lang="ts">
 import RoomTest from "./components/RoomTest.vue";
 import RoomChat from "./components/RoomChat.vue";
+import ConnectFour from "./components/ConnectFour.vue";
 </script>
 
 <style>
@@ -22,6 +24,6 @@ import RoomChat from "./components/RoomChat.vue";
 main {
   height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto auto 1fr auto;
 }
 </style>
