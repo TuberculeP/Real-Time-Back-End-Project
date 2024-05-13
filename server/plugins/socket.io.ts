@@ -7,7 +7,15 @@ const allRooms: { [key: string]: { players: Record<string, any>[] } } = {};
 
 export default defineNitroPlugin((nitroApp: NitroApp) => {
   const engine = new Engine();
-  const io = new Server();
+  const io = new Server({
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+    transports: ["websocket", "polling"],
+    allowEIO3: true,
+  });
 
   io.bind(engine);
 
@@ -31,7 +39,7 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
       io.to(roomId).emit("chat:join", { name });
     });
     socket.on("chat:message", ({ message, roomId, player }) => {
-      socket.to(roomId).emit("chat:message", {message, player});
+      socket.to(roomId).emit("chat:message", { message, player });
     });
 
     socket.on("disconnect", () => {
