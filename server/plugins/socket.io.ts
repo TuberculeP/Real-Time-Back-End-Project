@@ -15,31 +15,63 @@ export default defineNitroPlugin((nitroApp: NitroApp) => {
     let currentRoom: string;
     console.log("A user connected");
     socket.on("createOrJoinRoom", ({ id: roomId, name }) => {
-      if (!allRooms[roomId])
-        allRooms[roomId] = { players: [{ name, id: socket.id }] };
+      let isFirst = false;
+
+      // First player to join
+      if (!allRooms[roomId]) {
+        allRooms[roomId] = { players: [{ name, id: socket.id, color: 1 }] };
+        isFirst = true;
+      }
+
+      // Enough players in room
       else if (allRooms[roomId].players.length === 2) {
         socket.emit("error", "Room is full");
         return;
+
+        // Second player to join
       } else {
-        allRooms[roomId].players.push({ name, id: socket.id });
+        allRooms[roomId].players.push({
+          name,
+          id: socket.id,
+          color: 2,
+        });
       }
+
+      // Join the room
       socket.join(roomId);
+      currentRoom = roomId;
       io.to(roomId).emit("room-joined", {
         roomId,
         players: allRooms[roomId].players,
       });
       io.to(roomId).emit("chat:join", { name });
+
+      // Game infos
+      if (!isFirst) {
+        io.to(roomId).emit("game:start");
+      }
     });
     socket.on("chat:message", ({ message, roomId, player }) => {
-      socket.to(roomId).emit("chat:message", {message, player});
+      socket.to(roomId).emit("chat:message", { message, player });
+    });
+
+    socket.on("game:move", ({ board, roomId, lastMove }) => {
+      socket.to(roomId).emit("game:move", { board, lastMove });
     });
 
     socket.on("disconnect", () => {
       console.log("A user disconnected");
       if (currentRoom) {
+        const player = allRooms[currentRoom].players.find(
+          (player) => player.id === socket.id
+        );
         allRooms[currentRoom].players = allRooms[currentRoom].players.filter(
           (player) => player.id !== socket.id
         );
+        io.to(currentRoom).emit("chat:leave", {
+          name: player?.name,
+          players: allRooms[currentRoom].players,
+        });
       }
     });
   });

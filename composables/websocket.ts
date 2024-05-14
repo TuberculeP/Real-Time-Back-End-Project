@@ -4,12 +4,27 @@ import { io } from "socket.io-client";
 import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 import { useChat } from "./chat";
 
-const room = reactive({
+const room = reactive<{
+  connected: boolean;
+  players: {
+    name: string;
+    id: string;
+    color: number;
+  }[];
+  id: string;
+  ctxId: number;
+}>({
   connected: false,
   players: [],
   id: "",
   ctxId: 0,
 });
+
+const game = reactive<{
+  started: boolean;
+  lastMove?: number;
+  board?: number[][];
+}>({ started: false });
 
 export const useWebsocket = () => {
   const socket = io();
@@ -29,6 +44,11 @@ export const useWebsocket = () => {
       title: "Error joining room",
       description: "Room is full",
     });
+  });
+
+  socket.on("disconnect", () => {
+    game.started = false;
+    room.connected = false;
   });
 
   const createOrJoinRoom = (roomId: string) => {
@@ -52,8 +72,46 @@ export const useWebsocket = () => {
         message: `${name} joined the room !`,
       });
     });
+    socket.on("chat:leave", ({ name, players }) => {
+      toast.add({
+        title: `${name} left the room...`,
+      });
+      addMessage({
+        isServer: true,
+        message: `${name} left the room...`,
+      });
+      room.players = players;
+    });
     socket.on("chat:message", ({ message, player }) => {
       addMessage({ isServer: false, message, name: player.name });
+    });
+
+    // Game events
+    socket.on("game:start", () => {
+      // If game already started, send game infos to the new player
+      if (game.started) {
+        socket.emit("game:move", {
+          board: game.board,
+          roomId: room.id,
+          lastMove: game.lastMove,
+        });
+      } else {
+        game.started = true;
+        game.lastMove = 2;
+        game.board = [
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+        ];
+      }
+    });
+    socket.on("game:move", ({ lastMove, board }) => {
+      game.lastMove = lastMove;
+      game.board = board;
     });
   };
 
@@ -65,10 +123,29 @@ export const useWebsocket = () => {
     });
   };
 
+  const gameMove = (column: number) => {
+    if (!game.board) return;
+    game.board[column].every((cell: number, i) => {
+      if (cell == 0) {
+        (game.board as number[][])[column][i] = room.players[room.ctxId].color;
+      }
+      return !!cell;
+    });
+
+    game.lastMove = game.lastMove === 1 ? 2 : 1;
+    socket.emit("game:move", {
+      board: game.board,
+      roomId: room.id,
+      lastMove: game.lastMove,
+    });
+  };
+
   return {
     socket,
+    room,
+    game,
     createOrJoinRoom,
     sendChatMessage,
-    room,
+    gameMove,
   };
 };
