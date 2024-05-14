@@ -3,6 +3,9 @@
   <template v-else>
     <p v-if="canIPlay">My turn</p>
     <p v-else>Your friend's turn</p>
+    <div class="reconnection" v-if="game.started && room.players.length < 2">
+      <p>Your friend is disconnected</p>
+    </div>
     <div class="connect">
       <div
         v-for="(column, i) in game.board"

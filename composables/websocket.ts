@@ -88,17 +88,26 @@ export const useWebsocket = () => {
 
     // Game events
     socket.on("game:start", () => {
-      game.started = true;
-      game.lastMove = 2;
-      game.board = [
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0],
-      ];
+      // If game already started, send game infos to the new player
+      if (game.started) {
+        socket.emit("game:move", {
+          board: game.board,
+          roomId: room.id,
+          lastMove: game.lastMove,
+        });
+      } else {
+        game.started = true;
+        game.lastMove = 2;
+        game.board = [
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+          [0, 0, 0, 0, 0, 0],
+        ];
+      }
     });
     socket.on("game:move", ({ lastMove, board }) => {
       game.lastMove = lastMove;
@@ -118,8 +127,7 @@ export const useWebsocket = () => {
     if (!game.board) return;
     game.board[column].every((cell: number, i) => {
       if (cell == 0) {
-        (game.board as number[][])[column][i] =
-          room.players[room.ctxId].color;
+        (game.board as number[][])[column][i] = room.players[room.ctxId].color;
       }
       return !!cell;
     });

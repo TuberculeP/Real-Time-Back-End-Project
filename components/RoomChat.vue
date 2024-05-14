@@ -1,6 +1,8 @@
 <template>
   <div class="room-chat">
-    <p class="info" v-if="!room.connected">Connect to a room to see chat</p>
+    <p class="info" v-if="!room.connected">
+      Connect to a room to play & chat !
+    </p>
     <div v-else>
       <div v-for="({ message, isServer, time, name }, i) in chat" :key="i">
         <p class="info" v-if="isServer">{{ message }}</p>

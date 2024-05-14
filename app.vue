@@ -2,7 +2,7 @@
   <ClientOnly>
     <main>
       <RoomTest />
-      <ConnectFour />
+      <ConnectFour v-if="room.players.length" />
       <RoomChat />
       <UNotifications />
     </main>
@@ -10,9 +10,10 @@
 </template>
 
 <script setup lang="ts">
-import RoomTest from "./components/RoomTest.vue";
+import RoomTest from "./components/RoomInfo.vue";
 import RoomChat from "./components/RoomChat.vue";
 import ConnectFour from "./components/ConnectFour.vue";
+const { room } = useWebsocket();
 </script>
 
 <style>
