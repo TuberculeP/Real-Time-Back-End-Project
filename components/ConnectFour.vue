@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 const { room, game, gameMove } = useWebsocket();
 const canIPlay = computed(
-  () => game.started && game.lastMove !== room.players[room.ctxId].color
+  () => game.started && game.lastMove !== room.players[room.ctxId]?.color
 );
 
 function handleColumnClick(i: number) {
