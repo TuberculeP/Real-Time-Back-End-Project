@@ -1,4 +1,5 @@
 <template>
+	<pre>{{ room }}</pre>
 	<div class="connect">
 		<div
 			v-for="(column, i) in baseTable"
@@ -17,6 +18,8 @@
 </template>
 
 <script lang="ts" setup>
+const { room } = useWebsocket();
+
 const baseTable = ref<number[][]>([
 	[0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0],
@@ -30,7 +33,7 @@ const baseTable = ref<number[][]>([
 function onColumnClick(index: number) {
 	baseTable.value[index].every((cell, i) => {
 		if (cell == 0) {
-			baseTable.value[index][i] = 1;
+			baseTable.value[index][i] = room.players[room.ctxId]["color"];
 			return false;
 		}
 
