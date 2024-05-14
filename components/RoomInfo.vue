@@ -1,7 +1,7 @@
 <template>
   <div class="room">
     <div class="form" v-if="!room.connected">
-      <UInput v-model="inputRoom" placeholder="Room ID" />
+      <UInput maxlength="4" oninput="this.value = this.value.toUpperCase()" v-model="inputRoom" placeholder="Room ID" />
       <UButton @click="createOrJoinRoom(inputRoom)">Create or Join</UButton>
     </div>
     <div v-else>
@@ -20,7 +20,7 @@ const inputRoom = ref("");
 .room {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
   padding: 1rem;
 }

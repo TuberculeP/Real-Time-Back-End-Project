@@ -1,10 +1,12 @@
 <template>
-  <p v-if="!game.started">Waiting for player 2</p>
+  <p class="waiting" v-if="!game.started">Waiting for player 2</p>
   <template v-else>
-    <p v-if="canIPlay">My turn</p>
-    <p v-else>Your friend's turn</p>
-    <div class="reconnection" v-if="game.started && room.players.length < 2">
-      <p>Your friend is disconnected</p>
+    <div class="infos">
+      <p v-if="canIPlay">My turn</p>
+      <p v-else>Your friend's turn</p>
+      <div class="reconnection" v-if="game.started && room.players.length < 2">
+        <UAlert color="red" variant="solid" icon="i-ion-warning-outline" title="Your friend is disconnected"></UAlert>
+      </div>
     </div>
     <div class="connect">
       <div
@@ -37,13 +39,39 @@ function handleColumnClick(i: number) {
 }
 </script>
 
-<style scoped>
+
+<style scoped lang="scss">
+
+.waiting {
+  margin: 1rem;
+}
 .connect {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  background-color: rgb(14, 14, 139);
-  margin: 20px auto;
+  background-color: #4c4eb1;
+  margin: auto;
   padding: 10px;
+  border-radius: 12px;
+  height: fit-content;
+}
+
+.infos {
+  width: fit-content;
+  margin: -60px 0 0 auto;
+  align-items: end;
+  text-align: end;
+  padding: 0 1rem;
+}
+
+.reconnection {
+  position: absolute;
+  top: 33%;
+  left: 50%;
+  margin-left: -125px;
+  width: 250px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
 }
 
 .column {
@@ -55,7 +83,7 @@ function handleColumnClick(i: number) {
 
 .column:hover {
   cursor: pointer;
-  background-color: rgb(52, 52, 181);
+  background-color: #6466e9;
   border-radius: 100px;
 }
 
@@ -64,6 +92,12 @@ function handleColumnClick(i: number) {
   height: 50px;
   background: black;
   border-radius: 100px;
+}
+
+@media (prefers-color-scheme: light) {
+  .cell {
+    background: white;
+  }
 }
 
 .filled.player1 {
