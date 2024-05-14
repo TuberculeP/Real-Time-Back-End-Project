@@ -1,20 +1,24 @@
 <template>
   <p v-if="!game.started">Waiting for player 2</p>
-  <div v-else class="connect">
-    <div
-      v-for="(column, i) in game.board"
-      :key="i"
-      class="column"
-      @click="handleColumnClick(i)"
-    >
+  <template v-else>
+    <p v-if="canIPlay">My turn</p>
+    <p v-else>Your friend's turn</p>
+    <div class="connect">
       <div
-        v-for="(cell, j) in column"
-        :key="j"
-        class="cell"
-        :class="{ filled: !!cell, player1: cell === 1, player2: cell === 2 }"
-      ></div>
+        v-for="(column, i) in game.board"
+        :key="i"
+        class="column"
+        @click="handleColumnClick(i)"
+      >
+        <div
+          v-for="(cell, j) in column"
+          :key="j"
+          class="cell"
+          :class="{ filled: !!cell, player1: cell === 1, player2: cell === 2 }"
+        ></div>
+      </div>
     </div>
-  </div>
+  </template>
 </template>
 
 <script lang="ts" setup>
