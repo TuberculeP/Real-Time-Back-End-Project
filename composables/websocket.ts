@@ -46,6 +46,11 @@ export const useWebsocket = () => {
     });
   });
 
+  socket.on("disconnect", () => {
+    game.started = false;
+    room.connected = false;
+  });
+
   const createOrJoinRoom = (roomId: string) => {
     const randomName = uniqueNamesGenerator({
       dictionaries: [colors, animals],
