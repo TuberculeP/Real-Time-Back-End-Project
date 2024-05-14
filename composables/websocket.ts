@@ -4,12 +4,27 @@ import { io } from "socket.io-client";
 import { uniqueNamesGenerator, colors, animals } from "unique-names-generator";
 import { useChat } from "./chat";
 
-const room = reactive({
+const room = reactive<{
+  connected: boolean;
+  players: {
+    name: string;
+    id: string;
+    color: number;
+  }[];
+  id: string;
+  ctxId: number;
+}>({
   connected: false,
   players: [],
   id: "",
   ctxId: 0,
 });
+
+const game = reactive<{
+  started: boolean;
+  lastMove?: number;
+  board?: number[][];
+}>({ started: false });
 
 export const useWebsocket = () => {
   const socket = io();
@@ -65,6 +80,25 @@ export const useWebsocket = () => {
     socket.on("chat:message", ({ message, player }) => {
       addMessage({ isServer: false, message, name: player.name });
     });
+
+    // Game events
+    socket.on("game:start", () => {
+      game.started = true;
+      game.lastMove = 2;
+      game.board = [
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+      ];
+    });
+    socket.on("game:move", ({ lastMove, board }) => {
+      game.lastMove = lastMove;
+      game.board = board;
+    });
   };
 
   const sendChatMessage = (message: string) => {
@@ -75,10 +109,30 @@ export const useWebsocket = () => {
     });
   };
 
+  const gameMove = (column: number) => {
+    if (!game.board) return;
+    game.board[column].every((cell: number, i) => {
+      if (cell == 0) {
+        (game.board as number[][])[column][i] =
+          room.players[room.ctxId].color;
+      }
+      return !!cell;
+    });
+
+    game.lastMove = game.lastMove === 1 ? 2 : 1;
+    socket.emit("game:move", {
+      board: game.board,
+      roomId: room.id,
+      lastMove: game.lastMove,
+    });
+  };
+
   return {
     socket,
+    room,
+    game,
     createOrJoinRoom,
     sendChatMessage,
-    room,
+    gameMove,
   };
 };
