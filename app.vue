@@ -30,8 +30,4 @@ main {
   overflow-y: hidden;
 }
 
-.room .form{
-  display: flex;
-  margin: 40% auto 0;
-}
 </style>

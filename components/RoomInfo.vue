@@ -20,7 +20,7 @@ const inputRoom = ref("");
 .room {
   display: flex;
   flex-direction: column;
-  /* align-items: center; */
+  align-items: center;
   justify-content: center;
   padding: 1rem;
 }
@@ -29,5 +29,6 @@ const inputRoom = ref("");
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  margin: 35vh auto 0;
 }
 </style>
