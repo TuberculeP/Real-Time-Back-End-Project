@@ -29,13 +29,13 @@
 <script lang="ts" setup>
 const { room, game, gameMove } = useWebsocket();
 const canIPlay = computed(
-  () => game.started && game.lastMove !== room.players[room.ctxId]?.color
+	() => game.started && game.lastMove !== room.players[room.ctxId]?.color
 );
 
 function handleColumnClick(i: number) {
-  if (canIPlay.value) {
-    gameMove(i);
-  }
+	if (canIPlay.value) {
+		gameMove(i);
+	}
 }
 </script>
 
@@ -75,10 +75,10 @@ function handleColumnClick(i: number) {
 }
 
 .column {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 10px;
-  padding: 10px 10px;
+	display: flex;
+	flex-direction: column-reverse;
+	gap: 10px;
+	padding: 10px 10px;
 }
 
 .column:hover {
@@ -101,10 +101,10 @@ function handleColumnClick(i: number) {
 }
 
 .filled.player1 {
-  background-color: rgb(242, 57, 57);
+	background-color: rgb(242, 57, 57);
 }
 
 .filled.player2 {
-  background-color: rgb(238, 207, 54);
+	background-color: rgb(238, 207, 54);
 }
 </style>
