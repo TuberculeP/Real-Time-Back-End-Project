@@ -56,7 +56,7 @@ const chatMessage = () => {
 }
 
 .shadow {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(180deg, rgba(18, 18, 18, 0.6) 0%, rgba(255, 255, 255, 0) 40%);
   width: 100%;
   height: 100%;
   position: absolute;
@@ -99,7 +99,6 @@ form button[type="submit"]{
 
 .chat {
   display: flex;
-  padding: 0.25rem;
   align-items: center;
 }
 

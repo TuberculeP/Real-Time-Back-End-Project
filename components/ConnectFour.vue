@@ -90,7 +90,7 @@ function handleColumnClick(i: number) {
 .cell {
   width: 50px;
   height: 50px;
-  background: black;
+  background: #121212;
   border-radius: 100px;
 }
 
