@@ -26,5 +26,8 @@ main {
   height: 100vh;
   display: grid;
   grid-template-rows: auto auto 1fr auto;
+  position: relative;
+  overflow-y: hidden;
 }
+
 </style>
