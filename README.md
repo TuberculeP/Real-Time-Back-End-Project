@@ -1,6 +1,9 @@
-# Nuxt 3 Minimal Starter
+# Nuxt 3 Connect 4
 
-Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+This is a simple connect four project, you choose a room by name and connect to it with one other player. 
+Then you can play a game and chat with your oponent.
+There is no time limit and no victory condition detection.
+Have fun :tada:
 
 ## Setup
 
@@ -20,9 +23,9 @@ yarn install
 bun install
 ```
 
-## Development Server
+## Start
 
-Start the development server on `http://localhost:3000`:
+Development server on `http://localhost:3000`:
 
 ```bash
 # npm
@@ -38,39 +41,4 @@ yarn dev
 bun run dev
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm run build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm run preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 # Real-Time-Back-End-Project
