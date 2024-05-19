@@ -1,9 +1,9 @@
 # Nuxt 3 Connect 4
 
-This is a simple connect four project, you choose a room by name and connect to it with one other player. 
-Then you can play a game and chat with your oponent.
-There is no time limit and no victory condition detection.
-Have fun :tada:
+#### This is a simple connect four project, you choose a room by name and connect to it with one other player. 
+#### Then you can play a game and chat with your oponent.
+#### There is no time limit and no victory condition detection.
+#### Have fun :tada::tada:
 
 ## Setup
 
@@ -40,5 +40,3 @@ yarn dev
 # bun
 bun run dev
 ```
-
-# Real-Time-Back-End-Project
